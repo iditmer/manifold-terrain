@@ -38,7 +38,7 @@ def rational_slope(center: float, height: float, slope_at_center: float) -> Call
             Output array of heights on curve
         """
 
-        arg = (x - center) / (height / (2 * slope_at_center))
+        arg = (2 * slope_at_center / height) * (x - center)
         return 0.5 * height * (1 + arg / np.sqrt(1 + arg ** 2))
     
     return slope
