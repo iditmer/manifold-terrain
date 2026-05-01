@@ -1,5 +1,5 @@
 import pytest
-from manifold_terrain import base_functions
+from mterrain import base_functions
 
 @pytest.mark.parametrize("input, expected", [ ((45.0, 12.0, 1.0), 6.0), ((45.0, -12.0, 1.0), -6.0) ])
 def test_rational_slope_height_at_center(input, expected):    
