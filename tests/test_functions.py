@@ -1,10 +1,10 @@
 import pytest
-from mterrain import base_functions
+from mterrain import functions
 
 @pytest.mark.parametrize("input, expected", [ ((45.0, 12.0, 1.0), 6.0), ((45.0, -12.0, 1.0), -6.0) ])
 def test_rational_slope_height_at_center(input, expected):    
     center, height, slope = input
-    f = base_functions.rational_slope(center, height, slope)
+    f = functions.rational_slope(center, height, slope)
     assert f(center) == expected
 
 @pytest.mark.parametrize("input, expected",[
@@ -23,7 +23,7 @@ def test_rational_slope_height_at_center(input, expected):
 ])
 def test_rational_slope_values(input, expected):
     center, height, slope = input[0]
-    f = base_functions.rational_slope(center, height, slope)
+    f = functions.rational_slope(center, height, slope)
     for i in range(len(input[1])):
         assert f(input[1][i]) == pytest.approx(expected[i])
 
@@ -33,7 +33,7 @@ def test_sum_of_rational_slope_values():
     y = [ 0.035332329819115604, 0.045990192574770106, 0.06302452667065472, 0.09356946177848846, 
           0.1598642975653543, 0.3666903199551057, 1.8415165378250853, 10.372723109835936, 11.91812837082345, 
           12.361451302850513, 13.394955961211272, 18.463302408041713, 23.52010023956195, 24.5043596643045 ]
-    f = base_functions.sum_of_rational_slopes( [ 45.0, 90.0 ], [ 12.0, 13.0 ], [ 1.2, 0.8 ] )
+    f = functions.sum_of_rational_slopes( [ 45.0, 90.0 ], [ 12.0, 13.0 ], [ 1.2, 0.8 ] )
 
     for i in range(len(x)):
         assert f(x[i]) == pytest.approx(y[i])
