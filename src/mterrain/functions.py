@@ -91,7 +91,7 @@ def sum_of_rational_slopes(centers: Sequence[float], heights: Sequence[float], s
     
     return slope
 
-def lorentzian_peak(height: float, center: float, width: float) -> Callable[[NDArray[np.float64]], NDArray[np.float64]]:
+def lorentzian_peak(height: float | Sequence[float], center: float | Sequence[float], width: float | Sequence[float]) -> Callable[[NDArray[np.float64]], NDArray[np.float64]]:
     """
     Generate a scaled Lorentzian function whose graph has a single peak.
 
@@ -109,6 +109,13 @@ def lorentzian_peak(height: float, center: float, width: float) -> Callable[[NDA
     callable
         A function that takes an array as input and returns an array of values on the curve as output
     """
+    if isinstance(height, (int, float)):
+        height =  [height]
+    if isinstance(center, (int, float)):
+        center = [center]
+    if isinstance(width, (int, float)):
+        width = [width]
+        
     def peak(x: NDArray[np.float64]) -> NDArray[np.float64]:
         """
         Compute dependent values along scaled Lorentzian curve whose parameters were previously specified
@@ -123,6 +130,9 @@ def lorentzian_peak(height: float, center: float, width: float) -> Callable[[NDA
         ndarray
             Output array of heights on curve
         """
-        return height * ((0.5 * width) ** 2) / ((x - center) ** 2 + (0.5 * width) ** 2)
+        output = np.zeros_like(x)
+        for (h, c, w) in zip(height, center, width):
+            output += h * ((0.5 * w) ** 2) / ((x - c) ** 2 + (0.5 * w) ** 2)
+        return output
     
     return peak
