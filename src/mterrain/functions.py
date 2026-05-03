@@ -93,21 +93,22 @@ def sum_of_rational_slopes(centers: Sequence[float], heights: Sequence[float], s
 
 def lorentzian_peak(height: float | Sequence[float], center: float | Sequence[float], width: float | Sequence[float]) -> Callable[[NDArray[np.float64]], NDArray[np.float64]]:
     """
-    Generate a scaled Lorentzian function whose graph has a single peak.
+    Generate scaled Lorentzian function whose graph is a single peak; if parameters provided
+    as sequences, output function returns a sum of constituent Lorentzian functions.    
 
     Parameters
     ----------
     height : float
-        Maximum height of curve peak (occurs at center)
+        Maximum height(s) of curve peak(s) (occurs at x = center)
     center : float
-        Coordinate value for the center of the peak along the independent axis
+        Coordinate value(s) for center(s) of peak(s) along the independent axis
     width : float
-        Full width of curve at half its max height ("FWHM")
+        Full width(s) of curve(s) at half max height(s) ("FWHM")
 
     Returns
     -------
     callable
-        A function that takes an array as input and returns an array of values on the curve as output
+        Computes heights on the resulting curve given an array of coordinate values
     """
     if isinstance(height, (int, float)):
         height =  [height]
@@ -127,17 +128,17 @@ def lorentzian_peak(height: float | Sequence[float], center: float | Sequence[fl
         
     def peak(x: NDArray[np.float64]) -> NDArray[np.float64]:
         """
-        Compute dependent values along scaled Lorentzian curve whose parameters were previously specified
+        Computes values along scaled Lorentzian curve (or sum of curves)
 
         Parameters
         ----------
         x : ndarray
-            Input array of coordinate values along independent axis
+            Array of coordinate values along independent axis
 
         Returns
         -------
         ndarray
-            Output array of heights on curve
+            Output array of heights on curve (or sum of curves)
         """
         output = np.zeros_like(x)
         for (h, c, w) in zip(height, center, width):
