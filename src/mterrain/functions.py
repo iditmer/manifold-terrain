@@ -115,6 +115,15 @@ def lorentzian_peak(height: float | Sequence[float], center: float | Sequence[fl
         center = [center]
     if isinstance(width, (int, float)):
         width = [width]
+    
+    for h in height:
+        if h == 0.0:
+            raise ValueError(f"Invalid peak parameter. Expects non-zero height. Input: {h}")
+    for w in width:
+        if w == 0.0:
+            raise ValueError(f"Invalid peak parameter. Expects non-zero width. Input: {w}")
+        if w < 0.0:
+            raise ValueError(f"Invalid peak parameter. Expects positive width. Input: {w}")
         
     def peak(x: NDArray[np.float64]) -> NDArray[np.float64]:
         """

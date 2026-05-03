@@ -38,6 +38,15 @@ def test_sum_of_rational_slope_values():
     for i in range(len(x)):
         assert f(x[i]) == pytest.approx(y[i])
 
+@pytest.mark.parametrize("parameters, message", [
+                         ((0.0, 0.0, 1.0), "non-zero height"),
+                         ((1.0, 0.0, 0.0), "non-zero width"),
+                         ((1.0, 0.0, -1.0), "positive width"),])
+def test_lorentzian_parameter_validation(parameters, message):
+    with pytest.raises(ValueError) as err:
+        f = functions.lorentzian_peak(parameters[0], parameters[1], parameters[2])
+    assert message in str(err.value)
+
 @pytest.mark.parametrize("parameters", [ (25.0, -50.0, 12.0), (36.0, 25.0, 40.0) ])
 def test_lorentzian_peak(parameters):
     height, center, width = parameters
