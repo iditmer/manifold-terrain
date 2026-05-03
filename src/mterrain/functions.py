@@ -90,3 +90,39 @@ def sum_of_rational_slopes(centers: Sequence[float], heights: Sequence[float], s
         return output
     
     return slope
+
+def lorentzian_peak(height: float, center: float, width: float) -> Callable[[NDArray[np.float64]], NDArray[np.float64]]:
+    """
+    Generate a scaled Lorentzian function whose graph has a single peak.
+
+    Parameters
+    ----------
+    height : float
+        Maximum height of curve peak (occurs at center)
+    center : float
+        Coordinate value for the center of the peak along the independent axis
+    width : float
+        Full width of curve at half its max height ("FWHM")
+
+    Returns
+    -------
+    callable
+        A function that takes an array as input and returns an array of values on the curve as output
+    """
+    def peak(x: NDArray[np.float64]) -> NDArray[np.float64]:
+        """
+        Compute dependent values along scaled Lorentzian curve whose parameters were previously specified
+
+        Parameters
+        ----------
+        x : ndarray
+            Input array of coordinate values along independent axis
+
+        Returns
+        -------
+        ndarray
+            Output array of heights on curve
+        """
+        return height * ((0.5 * width) ** 2) / ((x - center) ** 2 + (0.5 * width) ** 2)
+    
+    return peak
