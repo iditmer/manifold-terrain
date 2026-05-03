@@ -125,6 +125,12 @@ def lorentzian_peak(height: float | Sequence[float], center: float | Sequence[fl
             raise ValueError(f"Invalid peak parameter. Expects non-zero width. Input: {w}")
         if w < 0.0:
             raise ValueError(f"Invalid peak parameter. Expects positive width. Input: {w}")
+    
+    param_lens = set([len(height), len(center), len(width)])
+    if 0 in param_lens:
+        raise ValueError("A non-zero number of each parameter is required to define component curves.")
+    if len(param_lens) > 1:
+        raise ValueError("An equal number of each parameter is required to define component curves.")
         
     def peak(x: NDArray[np.float64]) -> NDArray[np.float64]:
         """

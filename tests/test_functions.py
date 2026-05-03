@@ -41,7 +41,9 @@ def test_sum_of_rational_slope_values():
 @pytest.mark.parametrize("parameters, message", [
                          ((0.0, 0.0, 1.0), "non-zero height"),
                          ((1.0, 0.0, 0.0), "non-zero width"),
-                         ((1.0, 0.0, -1.0), "positive width"),])
+                         ((1.0, 0.0, -1.0), "positive width"),
+                         (([1.0, 1.0], [0.0], [2.0, 2.0]), "equal number"),
+                         (([1.0, 1.0], [0.0, 0.0], []), "non-zero number")])
 def test_lorentzian_parameter_validation(parameters, message):
     with pytest.raises(ValueError) as err:
         f = functions.lorentzian_peak(parameters[0], parameters[1], parameters[2])
