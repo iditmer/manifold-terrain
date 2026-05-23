@@ -5,7 +5,7 @@ from collections.abc import Callable
 from numpy.typing import NDArray
 from typing import Sequence
 
-def lorentzian_peak(
+def univariate_peak(
     height: float | Sequence[float], 
     center: float | Sequence[float], 
     width: float | Sequence[float],
@@ -52,7 +52,7 @@ def lorentzian_peak(
     if len(param_lens) > 1:
         raise ValueError("An equal number of each parameter is required to define component curves.")
         
-    def peak(x: NDArray[np.float64]) -> NDArray[np.float64]:
+    def peak_func(x: NDArray[np.float64]) -> NDArray[np.float64]:
         """
         Compute values along scaled Lorentzian curve (or sum of curves).
 
@@ -71,9 +71,9 @@ def lorentzian_peak(
             output += h * ((0.5 * w) ** 2) / ((x - c) ** 2 + (0.5 * w) ** 2)
         return output
     
-    return peak
+    return peak_func
 
-def irrational_slope(
+def univariate_slope(
     height: float | Sequence[float], 
     center: float | Sequence[float], 
     slope: float | Sequence[float],
@@ -120,7 +120,7 @@ def irrational_slope(
     if len(param_lens) > 1:
         raise ValueError("An equal number of each parameter is required to define component curves.")
         
-    def sloped_curve(x: NDArray[np.float64]) -> NDArray[np.float64]:
+    def slope_func(x: NDArray[np.float64]) -> NDArray[np.float64]:
         """
         Compute values along irrational sigmoidal curve (or sum of curves).
 
@@ -140,4 +140,4 @@ def irrational_slope(
             output = output + 0.5 * h * (1 + arg / np.sqrt(1 + arg ** 2))
         return output
     
-    return sloped_curve
+    return slope_func

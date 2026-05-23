@@ -10,9 +10,9 @@ from mterrain import functions
         (([1.0, 1.0], [0.0], [2.0, 2.0]), "equal number"),
         (([1.0, 1.0], [0.0, 0.0], []), "non-zero number"),
 ])
-def test_lorentzian_parameter_validation(parameters, message):
+def test_univariate_peak_parameter_validation(parameters, message):
     with pytest.raises(ValueError) as err:
-        f = functions.lorentzian_peak(parameters[0], parameters[1], parameters[2])
+        f = functions.univariate_peak(parameters[0], parameters[1], parameters[2])
     assert message in str(err.value)
 
 @pytest.mark.parametrize(
@@ -20,9 +20,9 @@ def test_lorentzian_parameter_validation(parameters, message):
     (25.0, -50.0, 12.0), 
     (36.0, 25.0, 40.0),
 ])
-def test_lorentzian_key_values(parameters):    
+def test_univariate_peak_key_values(parameters):    
     height, center, width = parameters
-    f = functions.lorentzian_peak(height, center, width)
+    f = functions.univariate_peak(height, center, width)
     
     assert f(center) == pytest.approx(height)
     assert f(center - 0.5 * width) == pytest.approx(0.5 * height)
@@ -58,8 +58,8 @@ def test_lorentzian_key_values(parameters):
             1.146765, 0.924082, 0.757474,
         ]),
 ])
-def test_lorentzian_values(parameters, values):
-    f = functions.lorentzian_peak(parameters[0], parameters[1], parameters[2])
+def test_univariate_peak_values(parameters, values):
+    f = functions.univariate_peak(parameters[0], parameters[1], parameters[2])
     for x, y in zip(np.arange(-15, 16, 1.5), values):
         assert f(x) == pytest.approx(y, abs=1e-5)
 
@@ -71,9 +71,9 @@ def test_lorentzian_values(parameters, values):
         (([1.0, 1.0], [0.0], [2.0, 2.0]), "equal number"),
         (([1.0, 1.0], [0.0, 0.0], []), "non-zero number"),
 ])
-def test_irrational_parameter_validation(parameters, message):
+def test_univariate_slope_parameter_validation(parameters, message):
     with pytest.raises(ValueError) as err:
-        f = functions.irrational_slope(parameters[0], parameters[1], parameters[2])
+        f = functions.univariate_slope(parameters[0], parameters[1], parameters[2])
     assert message in str(err.value)
 
 @pytest.mark.parametrize(
@@ -85,10 +85,10 @@ def test_irrational_parameter_validation(parameters, message):
         (8.0, 5.0, 1.0), 
         (8.0, 5.0, -2.0),
 ])
-def test_irrational_key_values(parameters):    
+def test_univariate_slope_key_values(parameters):    
     
     height, center, slope = parameters
-    f = functions.irrational_slope(height, center, slope)    
+    f = functions.univariate_slope(height, center, slope)    
     
     assert f(center) == pytest.approx(0.5 * height)        
     
@@ -133,7 +133,7 @@ def test_irrational_key_values(parameters):
             9.629907, 9.722576, 9.785207,
         ]),
 ])
-def test_irrational_values(parameters, values):
-    f = functions.irrational_slope(parameters[0], parameters[1], parameters[2])
+def test_univariate_slope_values(parameters, values):
+    f = functions.univariate_slope(parameters[0], parameters[1], parameters[2])
     for x, y in zip(np.arange(-15, 16, 1.5), values):
         assert f(x) == pytest.approx(y, abs=1e-5)
