@@ -5,6 +5,78 @@ from collections.abc import Callable
 from numpy.typing import NDArray
 from typing import Sequence
 
+def bivariate_peak(
+    height: float | Sequence[float],
+    center: tuple[float, float] | Sequence[tuple[float, float]],
+    width: float | Sequence[float],
+) -> Callable[[NDArray[np.float64], NDArray[np.float64]], NDArray[np.float64]]:
+    """
+    Generate a function describing a 2D peak with specified parameters.
+
+    Parameters
+    ----------
+    height : float
+        Maximum height of surface peak (occurs at (x,y) = center)
+    center : float
+        Coordinate values for center of peak in (x,y) plane
+    width : float
+        Full width of peak at half max height ("FWHM")
+
+    Returns
+    -------
+    callable
+        Computes heights on the resulting surface given an array of coordinate values
+    """
+    if isinstance(height, (int, float)):
+        height =  [height]
+    if isinstance(center, tuple):
+        center = [center]
+    if isinstance(width, (int, float)):
+        width = [width]
+
+    for h in height:
+        if h == 0.0:
+            raise ValueError(f"Invalid surface parameter. Expects non-zero height.")
+    for c in center:
+        if len(c) != 2:
+            raise ValueError(f"Invalid surface parameter. Expects 2D peak center.")
+    for w in width:
+        if w == 0.0:
+            raise ValueError(f"Invalid surface parameter. Expects non-zero width.")
+        if w < 0.0:
+            raise ValueError(f"Invalid surface parameter. Expects positive width.")
+        
+    param_lens = set([len(height), len(center), len(width)])
+    if 0 in param_lens:
+        raise ValueError("A non-zero number of each parameter is required to define component surfaces.")
+    if len(param_lens) > 1:
+        raise ValueError("An equal number of each parameter is required to define component surfaces.")
+    
+    def peak_func(x: NDArray[np.float64], y: NDArray[np.float64]) -> NDArray[np.float64]:
+        """
+        Compute values on scaled Lorentzian peak surface.
+
+        Parameters
+        ----------
+        x : ndarray
+            Array of coordinate values along x-axis
+
+        y : ndarray
+            Array of coordinate values along y-axis
+
+        Returns
+        -------
+        ndarray
+            Output array of heights on surface
+        """
+        output = np.zeros_like(x)
+        for (h, c, w) in zip(height, center, width):
+            output += h * ((0.5 * w) ** 2) / ((x - c[0]) ** 2 + (y - c[1]) ** 2 + (0.5 * w) ** 2)
+        return output    
+    
+    return peak_func
+    
+
 def univariate_peak(
     height: float | Sequence[float], 
     center: float | Sequence[float], 
