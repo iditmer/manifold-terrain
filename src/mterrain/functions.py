@@ -1,3 +1,5 @@
+"""Core functions for surface feature definition."""
+
 import numpy as np
 from collections.abc import Callable
 from numpy.typing import NDArray
@@ -9,8 +11,10 @@ def lorentzian_peak(
     width: float | Sequence[float],
 ) -> Callable[[NDArray[np.float64]], NDArray[np.float64]]:
     """
-    Generate scaled Lorentzian function whose graph is a single peak; if parameters provided
-    as sequences, output function returns a sum of constituent functions.    
+    Generate a function describing a 1D peak with specified parameters.
+
+    Lorentzian function generated has graph that is a single peak; if sequence of
+    parameters provided, output function returns a sum of constituent functions.    
 
     Parameters
     ----------
@@ -50,7 +54,7 @@ def lorentzian_peak(
         
     def peak(x: NDArray[np.float64]) -> NDArray[np.float64]:
         """
-        Computes values along scaled Lorentzian curve (or sum of curves)
+        Compute values along scaled Lorentzian curve (or sum of curves).
 
         Parameters
         ----------
@@ -75,8 +79,10 @@ def irrational_slope(
     slope: float | Sequence[float],
 ) -> Callable[[NDArray[np.float64]], NDArray[np.float64]]:
     """
-    Generate irrational function whose graph is a sigmoidal slope; if parameters provided
-    as sequences, output function returns a sum of constituent functions.    
+    Generate a function describing a 1D slope with specified parameters.
+
+    Irrational function generated has graph that is a sigmoidal slope; if sequence of
+    parameters provided, output function returns a sum of constituent functions.
 
     Parameters
     ----------
@@ -116,7 +122,7 @@ def irrational_slope(
         
     def sloped_curve(x: NDArray[np.float64]) -> NDArray[np.float64]:
         """
-        Computes values along irrational sigmoidal curve (or sum of curves)
+        Compute values along irrational sigmoidal curve (or sum of curves).
 
         Parameters
         ----------

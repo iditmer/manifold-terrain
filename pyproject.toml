@@ -1,2 +1,11 @@
 [tool.pytest.ini_options]
 pythonpath = ["src"]
+
+[tool.ruff]
+exclude = [ "examples", "tests" ]
+
+[tool.ruff.lint]
+select = ["D"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
