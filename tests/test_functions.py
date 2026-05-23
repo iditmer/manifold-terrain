@@ -31,6 +31,42 @@ def test_bivariate_peak_key_values(parameters):
     assert f(center[0], center[1] + 0.5 * width) == pytest.approx(0.5 * height)
 
 @pytest.mark.parametrize(
+    "parameters, values", [
+        ((22.0, (15.0, 25.0), 30.0), [
+            10.185185, 11.578947, 13.095238,
+            14.666667, 16.176471, 17.460317,
+            18.333333, 18.644068, 18.333333,
+            17.460317, 16.176471, 14.666667,
+            13.095238, 11.578947, 10.185185,
+            8.943089, 7.857143, 6.918239,
+            6.111111, 5.418719, 4.824561,
+        ]),
+        (([12.0, 8.0], [(5.0, 25.0), (8.0, 7.0)], [20.0, 5.0]), [
+            7.530786, 9.146734, 10.725345,
+            11.832709, 12.030777, 11.239280,
+            9.815285, 8.230161, 6.787238,
+            5.592357, 4.637435, 3.874707,
+            3.257063, 2.751509, 2.336775,
+            1.997179, 1.719320, 1.491449,
+            1.303622, 1.147742, 1.017379,
+        ]),
+        ((-7.5, (25.0, 5.0), 35.0), [
+            -1.429071, -1.574550, -1.741046,
+            -1.932177, -2.152143, -2.405734,
+            -2.698238, -3.035183, -3.421788,
+            -3.861917, -4.356330, -4.900000,
+            -5.478533, -6.064356, -6.614471,
+            -7.072748, -7.379518, -7.487775,
+            -7.379518, -7.072748, -6.614471,
+        ])
+    ]
+)
+def test_bivariate_peak_values(parameters, values):
+    f = functions.bivariate_peak(parameters[0], parameters[1], parameters[2])
+    for x, y, z in zip(np.arange(0.0, 31.0, 1.5), np.arange(31.0, 0.0, -1.5), values):
+        assert f(x, y) == pytest.approx(z, abs=1e-5)
+
+@pytest.mark.parametrize(
     "parameters, message", [
         ((0.0, 0.0, 1.0), "non-zero height"),
         ((1.0, 0.0, 0.0), "non-zero width"),
@@ -129,7 +165,6 @@ def test_univariate_slope_key_values(parameters):
     
     dy = f(center + 1e-6) - f(center - 1e-6)
     assert (dy / 2e-6) == pytest.approx(slope)
-
 
 @pytest.mark.parametrize(
     "parameters, values", [
