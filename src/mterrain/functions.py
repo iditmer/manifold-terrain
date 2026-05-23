@@ -3,7 +3,11 @@ from collections.abc import Callable
 from numpy.typing import NDArray
 from typing import Sequence
 
-def lorentzian_peak(height: float | Sequence[float], center: float | Sequence[float], width: float | Sequence[float]) -> Callable[[NDArray[np.float64]], NDArray[np.float64]]:
+def lorentzian_peak(
+    height: float | Sequence[float], 
+    center: float | Sequence[float], 
+    width: float | Sequence[float],
+) -> Callable[[NDArray[np.float64]], NDArray[np.float64]]:
     """
     Generate scaled Lorentzian function whose graph is a single peak; if parameters provided
     as sequences, output function returns a sum of constituent functions.    
@@ -65,7 +69,11 @@ def lorentzian_peak(height: float | Sequence[float], center: float | Sequence[fl
     
     return peak
 
-def irrational_slope(height: float | Sequence[float], center: float | Sequence[float], slope: float | Sequence[float]) -> Callable[[NDArray[np.float64]], NDArray[np.float64]]:
+def irrational_slope(
+    height: float | Sequence[float], 
+    center: float | Sequence[float], 
+    slope: float | Sequence[float],
+) -> Callable[[NDArray[np.float64]], NDArray[np.float64]]:
     """
     Generate irrational function whose graph is a sigmoidal slope; if parameters provided
     as sequences, output function returns a sum of constituent functions.    
