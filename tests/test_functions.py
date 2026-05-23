@@ -3,6 +3,19 @@ import pytest
 from mterrain import functions
 
 @pytest.mark.parametrize(
+    "parameters, message", [
+        ((0.0, (0.0, 0.0), 1.0), "non-zero height"),
+        ((1.0, (0.0, 0.0), 0.0), "non-zero width"),
+        ((1.0, (0.0, 0.0), -1.0), "positive width"),
+        (([1.0, 1.0], [(0.0, 0.0)], [2.0, 2.0]), "equal number"),
+        (([1.0, 1.0], [(0.0, 0.0), (0.0, 0.0)], []), "non-zero number"),
+])
+def test_bivariate_peak_parameter_validation(parameters, message):
+    with pytest.raises(ValueError) as err:
+        f = functions.bivariate_peak(parameters[0], parameters[1], parameters[2])
+    assert message in str(err.value)
+
+@pytest.mark.parametrize(
     "parameters", [ 
     (12.0, (25.0, 50.0), 20.0), 
     (-30.0, (100.0, 180.0), 50.0),
