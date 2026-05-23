@@ -3,6 +3,21 @@ import pytest
 from mterrain import functions
 
 @pytest.mark.parametrize(
+    "parameters", [ 
+    (12.0, (25.0, 50.0), 20.0), 
+    (-30.0, (100.0, 180.0), 50.0),
+])
+def test_bivariate_peak_key_values(parameters):    
+    height, center, width = parameters
+    f = functions.bivariate_peak(height, center, width)
+    
+    assert f(center[0], center[1]) == pytest.approx(height)
+    assert f(center[0] - 0.5 * width, center[1]) == pytest.approx(0.5 * height)
+    assert f(center[0] + 0.5 * width, center[1]) == pytest.approx(0.5 * height)
+    assert f(center[0], center[1] - 0.5 * width) == pytest.approx(0.5 * height)
+    assert f(center[0], center[1] + 0.5 * width) == pytest.approx(0.5 * height)
+
+@pytest.mark.parametrize(
     "parameters, message", [
         ((0.0, 0.0, 1.0), "non-zero height"),
         ((1.0, 0.0, 0.0), "non-zero width"),
