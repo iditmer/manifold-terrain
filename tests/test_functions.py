@@ -3,7 +3,7 @@ import pytest
 from mterrain import functions
 
 @pytest.mark.parametrize(
-        "parameters, values",[
+    "parameters, values",[
         ((0.0, 0.0), [0.0, 0.0, 0.0]),
         ((1.0, 0.0), [-100.0, 0.0, 100.0]),
         ((-1.0, 0.0), [100.0, 0.0, -100.0]),
@@ -15,6 +15,24 @@ from mterrain import functions
 def test_univariate_linear_values(parameters, values):
     f = functions.univariate_linear(parameters[0], parameters[1])
     assert f(np.array([-100.0, 0.0, 100.0])) == pytest.approx(values, abs=1e-12)
+
+@pytest.mark.parametrize(
+    "parameters, values", [
+        ((0.0, 0.0, 0.0), [0.0, 0.0, 0.0, 0.0, 0.0]),
+        ((1.0, 0.0, 0.0), [-100.0, 100.0, 100.0, -100.0, 0.0]),
+        ((0.0, 1.0, 0.0), [100.0, 100.0, -100.0, -100.0, 0.0]),
+        ((0.0, 0.0, 7.5), [7.5, 7.5, 7.5, 7.5, 7.5]),
+        ((0.0, 0.0, -7.5), [-7.5, -7.5, -7.5, -7.5, -7.5]),
+        ((1.2, 2.1, 0.0), [90.0, 330.0, -90.0, -330.0, 0.0]),
+        ((-2.1, -1.2, 0.0), [90.0, -330.0, -90.0, 330.0, 0.0]),
+        ((0.07, -0.05, 2.2), [-9.8, 4.2, 14.2, 0.2, 2.2]),
+        ((-0.07, 0.05, -2.2), [9.8, -4.2, -14.2, -0.2, -2.2],)
+])
+def test_bivariate_linear_values(parameters, values):
+    f = functions.bivariate_linear(parameters[0], parameters[1], parameters[2])
+    x = np.array([-100.0, 100.0, 100.0, -100.0, 0.0])
+    y = np.array([100.0, 100.0, -100.0, -100.0, 0.0])
+    assert f(x,y) == pytest.approx(values, abs=1e-12)
 
 @pytest.mark.parametrize(
     "parameters, message", [
