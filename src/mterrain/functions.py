@@ -5,6 +5,42 @@ from collections.abc import Callable
 from numpy.typing import NDArray
 from typing import Sequence
 
+def univariate_linear(
+    slope: float,
+    intercept: float,
+) -> Callable[[NDArray[np.float64]], NDArray[np.float64]]:
+    """
+    Generate a linear function in one dimension with specified parameters.
+
+    Parameters
+    ----------
+    slope : float
+        Slope of resultant line described by output function
+    intercept : float
+        Vertical intercept of resultant line described by output function
+    
+    Returns
+    -------
+    callable
+        Computes heights on the resulting line given an array of coordinate values
+    """
+    def linear_func(x: NDArray[np.float64]) -> NDArray[np.float64]:
+        """
+        Compute values on line in one dimension.
+
+        Parameters
+        ----------
+        x : ndarray
+            Array of coordinate values along independent axis
+
+        Returns
+        -------
+        ndarray
+            Output array of heights on line described by slope & intercept
+        """
+        return intercept + slope * x
+    return linear_func
+
 def bivariate_peak(
     height: float | Sequence[float],
     center: tuple[float, float] | Sequence[tuple[float, float]],
@@ -76,7 +112,6 @@ def bivariate_peak(
     
     return peak_func
     
-
 def univariate_peak(
     height: float | Sequence[float], 
     center: float | Sequence[float], 

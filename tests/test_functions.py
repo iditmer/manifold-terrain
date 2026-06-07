@@ -3,6 +3,22 @@ import pytest
 from mterrain import functions
 
 @pytest.mark.parametrize(
+        "parameters",[
+        (0.0, 0.0),
+        (1.0, 0.0),
+        (-1.0, 0.0),
+        (0.0, 2.0),
+        (0.0, -2.0),
+        (1.5, 1.5),
+        (-1.5, -1.5)
+])
+def test_univariate_linear_values(parameters):
+    f = functions.univariate_linear(parameters[0], parameters[1])
+    x = np.arange(-100.0, 100.0, 0.25)
+    expected = parameters[0] * x + parameters[1]
+    assert f(x) == pytest.approx(expected, abs=1e-12)
+
+@pytest.mark.parametrize(
     "parameters, message", [
         ((0.0, (0.0, 0.0), 1.0), "non-zero height"),
         ((1.0, (0.0, 0.0), 0.0), "non-zero width"),
