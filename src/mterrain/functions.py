@@ -41,6 +41,47 @@ def univariate_linear(
         return intercept + slope * x
     return linear_func
 
+def bivariate_linear(
+    x_slope: float,
+    y_slope: float,
+    intercept: float,
+) -> Callable[[NDArray[np.float64]], NDArray[np.float64]]:
+    """
+    Generate a linear function in two dimensions with specified parameters.
+
+    Parameters
+    ----------
+    x_slope : float
+        Slope of resultant plane described by output function in x-direction
+    y_slope : float
+        Slope of resultant plane described by output function in y-direction
+    intercept : float
+        Vertical intercept (of z-axis) of resultant plane described by output function
+    
+    Returns
+    -------
+    callable
+        Computes heights on the resulting plane given an array of coordinate values
+    """
+    def linear_func(x: NDArray[np.float64], y: NDArray[np.float64]) -> NDArray[np.float64]:
+        """
+        Compute values on line in one dimension.
+
+        Parameters
+        ----------
+        x : ndarray
+            Array of coordinate values along x-axis
+        y : ndarray
+            Array of coordinate values along y-axis
+
+        Returns
+        -------
+        ndarray
+            Output array of heights on plane described by slopes & intercept
+        """
+        return intercept + x_slope * x + y_slope * y
+    return linear_func
+
 def bivariate_peak(
     height: float | Sequence[float],
     center: tuple[float, float] | Sequence[tuple[float, float]],
