@@ -5,12 +5,9 @@ from collections.abc import Callable
 from numpy.typing import NDArray
 from typing import Sequence
 
-def univariate_linear(
-    slope: float,
-    intercept: float,
-) -> Callable[[NDArray[np.float64]], NDArray[np.float64]]:
+class univariate_linear:
     """
-    Generate a linear function in one dimension with specified parameters.
+    Represents a linear function in one dimension.
 
     Parameters
     ----------
@@ -18,13 +15,15 @@ def univariate_linear(
         Slope of resultant line described by output function
     intercept : float
         Vertical intercept of resultant line described by output function
-    
-    Returns
-    -------
-    callable
-        Computes heights on the resulting line given an array of coordinate values
     """
-    def linear_func(x: NDArray[np.float64]) -> NDArray[np.float64]:
+     
+    def __init__(self, 
+                 slope: float,
+                 intercept: float):
+        self.slope = slope
+        self.intercept = intercept
+
+    def __call__(self, x: NDArray[np.float64]) -> NDArray[np.float64]:
         """
         Compute values on line in one dimension.
 
@@ -36,10 +35,9 @@ def univariate_linear(
         Returns
         -------
         ndarray
-            Output array of heights on line described by slope & intercept
+            Array of coordinate values along dependent axis
         """
-        return intercept + slope * x
-    return linear_func
+        return self.intercept + self.slope * x
 
 def bivariate_linear(
     x_slope: float,
