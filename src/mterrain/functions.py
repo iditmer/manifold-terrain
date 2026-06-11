@@ -39,31 +39,33 @@ class univariate_linear:
         """
         return self.intercept + self.slope * x
 
-def bivariate_linear(
-    x_slope: float,
-    y_slope: float,
-    intercept: float,
-) -> Callable[[NDArray[np.float64]], NDArray[np.float64]]:
+class bivariate_linear:
     """
-    Generate a linear function in two dimensions with specified parameters.
+    Represents a linear function in two dimensions.
 
     Parameters
     ----------
     x_slope : float
-        Slope of resultant plane described by output function in x-direction
-    y_slope : float
-        Slope of resultant plane described by output function in y-direction
+        Slope of plane along x-direction
+    x_slope : float
+        Slope of plane along y-direction
     intercept : float
-        Vertical intercept (of z-axis) of resultant plane described by output function
-    
-    Returns
-    -------
-    callable
-        Computes heights on the resulting plane given an array of coordinate values
+        Height of plane at point (0,0)
     """
-    def linear_func(x: NDArray[np.float64], y: NDArray[np.float64]) -> NDArray[np.float64]:
+
+    def __init__(self,
+        x_slope: float,
+        y_slope: float,
+        intercept: float,):
+        self.x_slope = x_slope
+        self.y_slope = y_slope
+        self.intercept = intercept
+
+    def __call__(self,
+                 x: NDArray[np.float64], 
+                 y: NDArray[np.float64]) -> NDArray[np.float64]:
         """
-        Compute values on line in one dimension.
+        Compute heights on a plane.
 
         Parameters
         ----------
@@ -75,10 +77,9 @@ def bivariate_linear(
         Returns
         -------
         ndarray
-            Output array of heights on plane described by slopes & intercept
+            Array of height values
         """
-        return intercept + x_slope * x + y_slope * y
-    return linear_func
+        return self.intercept + self.x_slope * x + self.y_slope * y
 
 def bivariate_peak(
     height: float | Sequence[float],
