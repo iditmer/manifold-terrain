@@ -83,16 +83,22 @@ class bivariate_linear:
 
 class bivariate_peak:    
     """
-    Represents a symmetric peak in two dimensions.
+    Represents symmetric peaks in two dimensions.
+
+    If single values are provided for parameters, surface is a single
+    bell-like peak with a maximum height equal to the height parameter.
+
+    If sequences of parameter values are provided, surface is a sum
+    of constituent peaks.
 
     Parameters
     ----------
     height : float
-        Maximum height of surface [at (x,y) = center]
+        Height of constituent peak [at (x,y) = center]
     center : float
-        Coordinate values of center of peak in (x,y) plane
+        Coordinate values of center of constituent peak in (x,y) plane
     width : float
-        Diameter of peak at half its maximum height
+        Diameter of constituent peak at half its maximum height
     """
 
     def __init__(self,
@@ -130,7 +136,7 @@ class bivariate_peak:
         
     def __call__(self, x: NDArray[np.float64], y: NDArray[np.float64]) -> NDArray[np.float64]:
         """
-        Compute heights on symmetric 2D symmetric peak surface.
+        Compute heights on symmetric 2D peak surface.
 
         Parameters
         ----------
@@ -150,56 +156,60 @@ class bivariate_peak:
             output += h * ((0.5 * w) ** 2) / ((x - c[0]) ** 2 + (y - c[1]) ** 2 + (0.5 * w) ** 2)
         return output 
 
-def univariate_peak(
-    height: float | Sequence[float], 
-    center: float | Sequence[float], 
-    width: float | Sequence[float],
-) -> Callable[[NDArray[np.float64]], NDArray[np.float64]]:
+class univariate_peak:
     """
-    Generate a function describing a 1D peak with specified parameters.
+    Represents symmetric peaks in one dimension.
 
-    Lorentzian function generated has graph that is a single peak; if sequence of
-    parameters provided, output function returns a sum of constituent functions.    
+    If single values are provided for parameters, curve is a single
+    bell-like peak with a maximum height equal to the height parameter.
+
+    If sequences of parameter values are provided, curve is a sum
+    of constituent peaks.
 
     Parameters
     ----------
     height : float
-        Maximum height(s) of curve peak(s) (occurs at x = center)
+        Height of constituent peak [at x = center]
     center : float
-        Coordinate value(s) for center(s) of peak(s) along the independent axis
+        Coordinate value of center of constituent peak along independent axis
     width : float
-        Full width(s) of curve(s) at half max height(s) ("FWHM")
-
-    Returns
-    -------
-    callable
-        Computes heights on the resulting curve given an array of coordinate values
+        Width of constituent peak at half its maximum height
     """
-    if isinstance(height, (int, float)):
-        height =  [height]
-    if isinstance(center, (int, float)):
-        center = [center]
-    if isinstance(width, (int, float)):
-        width = [width]
     
-    for h in height:
-        if h == 0.0:
-            raise ValueError(f"Invalid curve parameter. Expects non-zero height. Input: {h}")
-    for w in width:
-        if w == 0.0:
-            raise ValueError(f"Invalid curve parameter. Expects non-zero width. Input: {w}")
-        if w < 0.0:
-            raise ValueError(f"Invalid curve parameter. Expects positive width. Input: {w}")
-    
-    param_lens = set([len(height), len(center), len(width)])
-    if 0 in param_lens:
-        raise ValueError("A non-zero number of each parameter is required to define component curves.")
-    if len(param_lens) > 1:
-        raise ValueError("An equal number of each parameter is required to define component curves.")
+    def __init__(self,
+                height: float | Sequence[float], 
+                center: float | Sequence[float], 
+                width: float | Sequence[float]):
         
-    def peak_func(x: NDArray[np.float64]) -> NDArray[np.float64]:
+        if isinstance(height, (int, float)):
+            height =  [height]
+        if isinstance(center, (int, float)):
+            center = [center]
+        if isinstance(width, (int, float)):
+            width = [width]
+        
+        param_lens = set([len(height), len(center), len(width)])
+        if 0 in param_lens:
+            raise ValueError("A non-zero number of each parameter is required to define component curves.")
+        if len(param_lens) > 1:
+            raise ValueError("An equal number of each parameter is required to define component curves.")
+        
+        for h in height:
+            if h == 0.0:
+                raise ValueError(f"Invalid curve parameter. Expects non-zero height. Input: {h}")
+        for w in width:
+            if w == 0.0:
+                raise ValueError(f"Invalid curve parameter. Expects non-zero width. Input: {w}")
+            if w < 0.0:
+                raise ValueError(f"Invalid curve parameter. Expects positive width. Input: {w}")
+            
+        self.h = height
+        self.c = center
+        self.w = width
+    
+    def __call__(self, x: NDArray[np.float64]) -> NDArray[np.float64]: 
         """
-        Compute values along scaled Lorentzian curve (or sum of curves).
+        Compute heights on peak (or sum of peaks) in one dimension.
 
         Parameters
         ----------
@@ -209,14 +219,12 @@ def univariate_peak(
         Returns
         -------
         ndarray
-            Output array of heights on curve (or sum of curves)
-        """
+            Array of heights on curve
+        """       
         output = np.zeros_like(x)
-        for (h, c, w) in zip(height, center, width):
+        for (h, c, w) in zip(self.h, self.c, self.w):
             output += h * ((0.5 * w) ** 2) / ((x - c) ** 2 + (0.5 * w) ** 2)
         return output
-    
-    return peak_func
 
 def univariate_slope(
     height: float | Sequence[float], 
