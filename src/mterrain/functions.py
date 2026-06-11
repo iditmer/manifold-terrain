@@ -12,9 +12,9 @@ class univariate_linear:
     Parameters
     ----------
     slope : float
-        Slope of resultant line described by output function
+        Slope of line along independent axis.
     intercept : float
-        Vertical intercept of resultant line described by output function
+        Height of line along depenedent axis when independent variable = 0.0
     """
      
     def __init__(self, 
@@ -25,7 +25,7 @@ class univariate_linear:
 
     def __call__(self, x: NDArray[np.float64]) -> NDArray[np.float64]:
         """
-        Compute values on line in one dimension.
+        Compute heights on a line.
 
         Parameters
         ----------
@@ -35,7 +35,7 @@ class univariate_linear:
         Returns
         -------
         ndarray
-            Array of coordinate values along dependent axis
+            Array of height values
         """
         return self.intercept + self.slope * x
 
