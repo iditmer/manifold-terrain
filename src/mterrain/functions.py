@@ -175,7 +175,7 @@ class univariate_peak:
     width : float
         Width of constituent peak at half its maximum height
     """
-    
+
     def __init__(self,
                 height: float | Sequence[float], 
                 center: float | Sequence[float], 
@@ -226,56 +226,61 @@ class univariate_peak:
             output += h * ((0.5 * w) ** 2) / ((x - c) ** 2 + (0.5 * w) ** 2)
         return output
 
-def univariate_slope(
-    height: float | Sequence[float], 
-    center: float | Sequence[float], 
-    slope: float | Sequence[float],
-) -> Callable[[NDArray[np.float64]], NDArray[np.float64]]:
+class univariate_slope:
     """
-    Generate a function describing a 1D slope with specified parameters.
+    Represents symmetric slopes in one dimension.
 
-    Irrational function generated has graph that is a sigmoidal slope; if sequence of
-    parameters provided, output function returns a sum of constituent functions.
+    If single values are provided for parameters, curve is a single
+    sigmoidal shape spanning the specified height. Behavior is 
+    asymptotic and horizontal span of slope is dictated by its
+    steepness at the center.
+
+    If sequences of parameter values are provided, curve is a sum
+    of constituent sigmoidal slopes.
 
     Parameters
     ----------
     height : float
-        Approximate total height(s) spanned by curve(s) asymptotically
+        Height spanned by constituent curve
     center : float
-        Coordinate value(s) for center(s) inflection point(s) of curve(s) along the independent axis
+        Location of inflection point of constituent curve
     slope : float
-        Maximum slope(s) of the curve(s); occurs at center(s)
-
-    Returns
-    -------
-    callable
-        Computes heights on the resulting curve given an array of coordinate values
+        Maximal slope of curve (attained at inflection point)
     """
-    if isinstance(height, (int, float)):
-        height =  [height]
-    if isinstance(center, (int, float)):
-        center = [center]
-    if isinstance(slope, (int, float)):
-        slope = [slope]
-    
-    for h in height:
-        if h == 0.0:
-            raise ValueError(f"Invalid curve parameter. Expects non-zero height. Input: {h}")
-        if h < 0.0:
-            raise ValueError(f"Invalid curve parameter. Expects positive height. Input: {h}")
-    for s in slope:
-        if s == 0.0:
-            raise ValueError(f"Invalid curve parameter. Expects non-zero slope. Input: {s}")
-    
-    param_lens = set([len(height), len(center), len(slope)])
-    if 0 in param_lens:
-        raise ValueError("A non-zero number of each parameter is required to define component curves.")
-    if len(param_lens) > 1:
-        raise ValueError("An equal number of each parameter is required to define component curves.")
+
+    def __init__(self, 
+                height: float | Sequence[float], 
+                center: float | Sequence[float], 
+                slope: float | Sequence[float]):
+        if isinstance(height, (int, float)):
+            height =  [height]
+        if isinstance(center, (int, float)):
+            center = [center]
+        if isinstance(slope, (int, float)):
+            slope = [slope]
         
-    def slope_func(x: NDArray[np.float64]) -> NDArray[np.float64]:
+        param_lens = set([len(height), len(center), len(slope)])
+        if 0 in param_lens:
+            raise ValueError("A non-zero number of each parameter is required to define component curves.")
+        if len(param_lens) > 1:
+            raise ValueError("An equal number of each parameter is required to define component curves.")
+        
+        for h in height:
+            if h == 0.0:
+                raise ValueError(f"Invalid curve parameter. Expects non-zero height. Input: {h}")
+            if h < 0.0:
+                raise ValueError(f"Invalid curve parameter. Expects positive height. Input: {h}")
+        for s in slope:
+            if s == 0.0:
+                raise ValueError(f"Invalid curve parameter. Expects non-zero slope. Input: {s}")
+            
+        self.h = height
+        self.c = center
+        self.s = slope
+
+    def __call__(self, x: NDArray[np.float64]) -> NDArray[np.float64]:
         """
-        Compute values along irrational sigmoidal curve (or sum of curves).
+        Compute heights on slope (or sum of slopes) in one dimension.
 
         Parameters
         ----------
@@ -285,12 +290,10 @@ def univariate_slope(
         Returns
         -------
         ndarray
-            Output array of heights on curve (or sum of curves)
+            Array of heights on curve
         """
         output = np.zeros_like(x)
-        for (h, c, s) in zip(height, center, slope):
+        for (h, c, s) in zip(self.h, self.c, self.s):
             arg = (2 * s / h) * (x - c)
             output = output + 0.5 * h * (1 + arg / np.sqrt(1 + arg ** 2))
         return output
-    
-    return slope_func
